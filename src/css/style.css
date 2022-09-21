@@ -1,0 +1,44 @@
+.upper {
+    display: flex;
+    justify-content: space-around;
+    margin: 20px 0px;
+}
+
+.lower {
+    background-color: yellow;
+    display: flex;
+    justify-content: center;
+}
+
+.wordButton {
+    margin-top: 50px;
+    background-color: green;
+    color: white;
+    border-radius: 5px;
+    height: 50px;
+    width: 150px;
+    font-weight: bold;
+    font-size: 15px;
+    border: none;
+}
+
+.wordButton:hover {
+    cursor: pointer;
+}
+
+.letterList {
+    display: flex;
+    flex-wrap: wrap;
+    width: 75%;
+    background-color: red;
+    justify-content: space-between;
+}
+
+.letterButton {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    width: 50px;
+    text-align: center;
+    
+}
