@@ -15,10 +15,11 @@ function App() {
     const alphabet = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k",
         "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z"];
 
-    const [buttonState, setButtonState] = React.useState('disabled')
-    const [shownArray, setShownArray] = React.useState([])
+    const [shownArray, setShownArray] = React.useState([]);
+    const [started, setStarted] = React.useState(false)
     const targetWord = randomWord();
     const targetArray = simplifyWordArray(targetWord.split(''));
+    let tries = 0;
 
     function simplifyWordArray(wordArray) {
         for (let [idx, l] of wordArray.entries()) {
@@ -47,11 +48,11 @@ function App() {
     }
 
     function startGame() {
-        setButtonState('enabled');
-        console.log(targetWord)
-        console.log(targetWord.split(''));
-        console.log(targetArray);
-        setShownArray(generateGuessArray(targetWord));
+        if (started === false) {
+            setStarted(true);
+            setShownArray(generateGuessArray(targetWord));
+        }
+
     }
 
     function randomWord() {
@@ -67,16 +68,35 @@ function App() {
         return outArray
     }
 
-    function updateGuessArray(clickedLetter) {
-        // if ()
-    }
+
 
     function LetterButton(props) {
-        const { letter, buttonState } = props
+        const { letter, initialState } = props;
+        let clicked = false;
+        let local;
+
+        if (initialState === false) {
+            local = 'disabled';
+        } else {
+            local = 'enabled';
+        }
+
+        const [localState, setLocalState] = React.useState(local);
+
+         
+
+        function updateGuessArray(clickedLetter) {
+            if (clicked === false) {
+                clicked = true;
+                tries++;
+                setLocalState('disabled');
+                console.log(clickedLetter)
+            }
+        }
 
         return (
             <li>
-                <button className={`letterButton ${buttonState}`} onClick={() => updateGuessArray(letter)}>
+                <button className={`letterButton ${localState}`} onClick={() => updateGuessArray(letter)}>
 
                     {letter.toUpperCase()}
 
@@ -84,8 +104,6 @@ function App() {
             </li>
         )
     }
-
-
 
     return (
         <main>
@@ -98,13 +116,13 @@ function App() {
                         Escolher palavra
                     </button>
                     <ul className="targetWord">
-                        {shownArray.map((l) => <li>{l}</li>)}
+                        {shownArray.map((l, index) => <li key={index} >{l}</li>)}
                     </ul>
                 </div>
             </div>
             <div className="mid">
                 <ul className="letterList">
-                    {alphabet.map((l, index) => <LetterButton key={index} letter={l} buttonState={buttonState} />)}
+                    {alphabet.map((l, index) => <LetterButton key={index} letter={l} initialState={started} />)}
                 </ul>
             </div>
             <div className="lower">
