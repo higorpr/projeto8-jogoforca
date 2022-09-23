@@ -17,7 +17,8 @@ function LetterButton(props) {
         maskedArray,
         setMaskedArray,
         errors,
-        setErrors
+        setErrors,
+        setWordColor
     } = props;
 
     const [disableButton, setDisableButton] = React.useState(false);
@@ -36,10 +37,18 @@ function LetterButton(props) {
                 if (wordArray[i] === clickedLetter) {
                     auxMask[i] = clickedLetter
                     setMaskedArray(auxMask);
+
+                    if (!auxMask.includes('_')) {
+                        setWordColor('green');
+                    }
                 }
             }
         } else {
             setErrors(errors + 1);
+            if (errors === 5) {
+                setWordColor('red');
+                setMaskedArray(wordArray)
+            }
         }
     }
 
@@ -76,17 +85,16 @@ function App() {
     const [started, setStarted] = React.useState(false)
     // Generate random word
     const [targetWord, setTargetWord] = React.useState(randomWord());
-    console.log(targetWord);
+    console.log(targetWord)
     // Generate array of simplified version of targetWord
     const targetArray = simplifyWordArray(targetWord.split(''));
-    console.log(targetArray)
     // Generate masked array of targetArray
 
     const [shownArray, setShownArray] = React.useState([]);
-    console.log(shownArray)
 
     const [errors, setErrors] = React.useState(0);
     const gameOn = (started === false) ? false : true;
+    const [wordColor, setWordColor] = React.useState('');
 
     function randomWord() {
         const word = palavras[Math.floor(Math.random() * palavras.length)];
@@ -136,7 +144,8 @@ function App() {
             setStarted(true);
             setShownArray(generateGuessArray(targetWord))
             // console.log(shownArray)
-
+        } else {
+            window.location.reload()
         }
 
     }
@@ -151,7 +160,7 @@ function App() {
                     <button className="wordButton" onClick={startGame}>
                         Escolher palavra
                     </button>
-                    <ul className="targetWord">
+                    <ul className={`targetWord ${wordColor}`}>
                         {shownArray.map((l, index) => <li key={index} >{l}</li>)}
                     </ul>
                 </div>
@@ -165,7 +174,8 @@ function App() {
                         maskedArray={shownArray}
                         setMaskedArray={setShownArray}
                         errors={errors}
-                        setErrors={setErrors} />)}
+                        setErrors={setErrors}
+                        setWordColor={setWordColor} />)}
                 </ul>
             </div>
             <div className="lower">
@@ -173,7 +183,7 @@ function App() {
                     Já sei a palavra!
                 </p>
                 <input className="guessInput" type="text" placeholder="Digite aqui seu chute" disabled={!gameOn} />
-                <button className={`guessButton ${gameOn ? 'enabled' : 'disabled'}`} disabled={!gameOn}>
+                <button className='guessButton' disabled={!gameOn}>
                     Chutar!
                 </button>
             </div>

@@ -109,7 +109,17 @@
     font-weight: bold;
 }
 
-.letterButton:disabled{
+button:disabled {
     background-color: rgb(159, 170, 181);
     color: rgb(121, 129, 138);
+}
+
+
+
+.red {
+    color: red;
+}
+
+.green {
+    color: green;
 }
