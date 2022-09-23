@@ -9,51 +9,84 @@ import f4 from "../assets/forca4.png";
 import f5 from "../assets/forca5.png";
 import f6 from "../assets/forca6.png";
 
+function LetterButton(props) {
+    const {
+        letter,
+        gameStarted,
+        wordArray,
+        maskedArray,
+        setMaskedArray,
+        errors,
+        setErrors
+    } = props;
 
+    const [disableButton, setDisableButton] = React.useState(false);
+
+    function updateGuessArray(clickedLetter) {
+        // setClicked(true);
+        // tries++;
+        console.log(wordArray);
+        console.log(maskedArray)
+        setDisableButton(true)
+        console.log(clickedLetter)
+
+        if (wordArray.includes(clickedLetter)) {
+            let auxMask = [...maskedArray];
+            for (let i = 0; i < wordArray.length; i++) {
+                if (wordArray[i] === clickedLetter) {
+                    auxMask[i] = clickedLetter
+                    setMaskedArray(auxMask);
+                }
+            }
+        } else {
+            setErrors(errors + 1);
+        }
+    }
+
+    if (gameStarted === false) {
+        return (
+            <li>
+                <button className={`letterButton`} disabled >
+
+                    {letter.toUpperCase()}
+
+                </button>
+            </li>
+        )
+    } else {
+        return (
+            <li>
+                <button className={`letterButton`} disabled={disableButton} onClick={() => updateGuessArray(letter)}>
+
+                    {letter.toUpperCase()}
+
+                </button>
+            </li>
+        )
+    }
+}
 
 function App() {
     const alphabet = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k",
         "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z"];
 
-    const [shownArray, setShownArray] = React.useState([]);
+    const hangEvolution = [f0, f1, f2, f3, f4, f5, f6];
+
+
     const [started, setStarted] = React.useState(false)
-    const targetWord = randomWord();
+    // Generate random word
+    const [targetWord, setTargetWord] = React.useState(randomWord());
+    console.log(targetWord);
+    // Generate array of simplified version of targetWord
     const targetArray = simplifyWordArray(targetWord.split(''));
-    let tries = 0;
+    console.log(targetArray)
+    // Generate masked array of targetArray
 
-    function simplifyWordArray(wordArray) {
-        for (let [idx, l] of wordArray.entries()) {
-            if (l === 'á' || l === 'à' || l === 'ã' || l === 'â') {
-                wordArray[idx] = 'a';
-            }
+    const [shownArray, setShownArray] = React.useState([]);
+    console.log(shownArray)
 
-            if (l === 'é' || l === 'è' || l === 'ê' || l === 'ẽ') {
-                wordArray[idx] = 'e';
-            }
-
-            if (l === 'í' || l === 'ì') {
-                wordArray[idx] = 'i';
-            }
-
-            if (l === 'ó' || l === 'ò' || l === 'ô' || l === 'õ') {
-                wordArray[idx] = 'o';
-            }
-
-            if (l === 'ú' || l === 'ù' || l === 'û' || l === 'ü') {
-                wordArray[idx] = 'u';
-            }
-        }
-
-        return wordArray
-    }
-
-    function startGame() {
-        if (started === false) {
-            setStarted(true);
-            setShownArray(generateGuessArray(targetWord));
-        }
-
-    }
+    const [errors, setErrors] = React.useState(0);
+    const gameOn = (started === false) ? false : true;
 
     function randomWord() {
         const word = palavras[Math.floor(Math.random() * palavras.length)];
@@ -68,48 +101,51 @@ function App() {
         return outArray
     }
 
+    function simplifyWordArray(arr) {
+        for (let [idx, l] of arr.entries()) {
+            if (l === 'á' || l === 'à' || l === 'ã' || l === 'â') {
+                arr[idx] = 'a';
+            }
 
+            if (l === 'é' || l === 'è' || l === 'ê' || l === 'ẽ') {
+                arr[idx] = 'e';
+            }
 
-    function LetterButton(props) {
-        const { letter, initialState } = props;
-        let clicked = false;
-        let local;
+            if (l === 'í' || l === 'ì') {
+                arr[idx] = 'i';
+            }
 
-        if (initialState === false) {
-            local = 'disabled';
-        } else {
-            local = 'enabled';
-        }
+            if (l === 'ó' || l === 'ò' || l === 'ô' || l === 'õ') {
+                arr[idx] = 'o';
+            }
 
-        const [localState, setLocalState] = React.useState(local);
+            if (l === 'ú' || l === 'ù' || l === 'û' || l === 'ü') {
+                arr[idx] = 'u';
+            }
 
-         
-
-        function updateGuessArray(clickedLetter) {
-            if (clicked === false) {
-                clicked = true;
-                tries++;
-                setLocalState('disabled');
-                console.log(clickedLetter)
+            if (l === 'ç') {
+                arr[idx] = 'c';
             }
         }
 
-        return (
-            <li>
-                <button className={`letterButton ${localState}`} onClick={() => updateGuessArray(letter)}>
+        return arr
+    }
 
-                    {letter.toUpperCase()}
+    function startGame() {
+        if (started === false) {
+            setStarted(true);
+            setShownArray(generateGuessArray(targetWord))
+            // console.log(shownArray)
 
-                </button>
-            </li>
-        )
+        }
+
     }
 
     return (
         <main>
             <div className="upper">
                 <div className="upperImage">
-                    <img src={f0} alt="" />
+                    <img src={hangEvolution[errors]} alt="" />
                 </div>
                 <div className="upperRight">
                     <button className="wordButton" onClick={startGame}>
@@ -122,15 +158,22 @@ function App() {
             </div>
             <div className="mid">
                 <ul className="letterList">
-                    {alphabet.map((l, index) => <LetterButton key={index} letter={l} initialState={started} />)}
+                    {alphabet.map((l, index) => <LetterButton key={index}
+                        letter={l}
+                        gameStarted={started}
+                        wordArray={targetArray}
+                        maskedArray={shownArray}
+                        setMaskedArray={setShownArray}
+                        errors={errors}
+                        setErrors={setErrors} />)}
                 </ul>
             </div>
             <div className="lower">
                 <p>
                     Já sei a palavra!
                 </p>
-                <input className="guessInput" type="text" placeholder="Digite aqui seu chute" />
-                <button className="guessButton">
+                <input className="guessInput" type="text" placeholder="Digite aqui seu chute" disabled={!gameOn} />
+                <button className={`guessButton ${gameOn ? 'enabled' : 'disabled'}`} disabled={!gameOn}>
                     Chutar!
                 </button>
             </div>
