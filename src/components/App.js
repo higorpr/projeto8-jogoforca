@@ -13,7 +13,7 @@ function LetterButton(props) {
     const {
         letter,
         gameStarted,
-        wordArray,
+        simpleArray,
         maskedArray,
         setMaskedArray,
         errors,
@@ -21,21 +21,24 @@ function LetterButton(props) {
         setWordColor,
         gameEnded,
         setGameEnded,
-        targetWord
+        targetWord,
+        targetArray
     } = props;
-
+    console.log(targetArray)
     const [disableButton, setDisableButton] = React.useState(false);
-    
+
 
     function updateGuessArray(clickedLetter) {
         setDisableButton(true)
 
-        if (wordArray.includes(clickedLetter)) {
+        if (simpleArray.includes(clickedLetter)) {
             let auxMask = [...maskedArray];
-            for (let i = 0; i < wordArray.length; i++) {
-                if (wordArray[i] === clickedLetter) {
-                    auxMask[i] = clickedLetter
+            for (let i = 0; i < targetArray.length; i++) {
+                if (simpleArray[i] === clickedLetter) {
+                    auxMask[i] = targetArray[i]
                     setMaskedArray(auxMask);
+                    console.log(targetArray);
+                    console.log(auxMask);
 
                     if (!auxMask.includes('_')) {
                         setMaskedArray(targetWord.split(''));
@@ -82,7 +85,7 @@ function LetterButton(props) {
 
 function App() {
     const alphabet = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k",
-        "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z"];
+        "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z",];
 
     const hangEvolution = [f0, f1, f2, f3, f4, f5, f6];
 
@@ -98,9 +101,10 @@ function App() {
     const [started, setStarted] = React.useState(false)
     // Generate random word
     const [targetWord, setTargetWord] = React.useState(randomWord());
-    
     // Generate array of simplified version of targetWord
-    let targetArray = simplifyWordArray(targetWord.split(''));
+    let targetArray = (targetWord.split(''));
+    console.log(targetArray)
+    let simpleArray = simplifyWordArray(targetArray);
     // Generate masked array of targetArray
 
     const [shownArray, setShownArray] = React.useState([]);
@@ -133,40 +137,41 @@ function App() {
     }
 
     function simplifyWordArray(arr) {
+        let out_arr = [...arr];
         for (let [idx, l] of arr.entries()) {
             if (l === 'á' || l === 'à' || l === 'ã' || l === 'â') {
-                arr[idx] = 'a';
+                out_arr[idx] = 'a';
             }
 
             if (l === 'é' || l === 'è' || l === 'ê' || l === 'ẽ') {
-                arr[idx] = 'e';
+                out_arr[idx] = 'e';
             }
 
             if (l === 'í' || l === 'ì') {
-                arr[idx] = 'i';
+                out_arr[idx] = 'i';
             }
 
             if (l === 'ó' || l === 'ò' || l === 'ô' || l === 'õ') {
-                arr[idx] = 'o';
+                out_arr[idx] = 'o';
             }
 
             if (l === 'ú' || l === 'ù' || l === 'û' || l === 'ü') {
-                arr[idx] = 'u';
+                out_arr[idx] = 'u';
             }
 
             if (l === 'ç') {
-                arr[idx] = 'c';
+                out_arr[idx] = 'c';
             }
         }
 
-        return arr;
+        return out_arr;
     }
 
     function startGame() {
         if (started === false) {
             console.log(targetWord)
             setStarted(true);
-            setShownArray(generateGuessArray(targetWord))
+            setShownArray(generateGuessArray(simpleArray))
             setGameEnded(false);
         } else {
             window.location.reload(true);
@@ -206,7 +211,7 @@ function App() {
                         letter={l}
                         gameStarted={started}
                         setGameStarted={setStarted}
-                        wordArray={targetArray}
+                        simpleArray={simpleArray}
                         maskedArray={shownArray}
                         setMaskedArray={setShownArray}
                         errors={errors}
@@ -215,7 +220,8 @@ function App() {
                         gameEnded={gameEnded}
                         setGameEnded={setGameEnded}
                         targetWord={targetWord}
-                         />)}
+                        targetArray={targetArray}
+                    />)}
                 </ul>
             </div>
             <div className="lower">
