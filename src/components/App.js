@@ -22,11 +22,9 @@ function LetterButton(props) {
         gameEnded,
         setGameEnded,
         targetWord,
-        targetArray
+        targetArray,
     } = props;
-    console.log(targetArray)
     const [disableButton, setDisableButton] = React.useState(false);
-
 
     function updateGuessArray(clickedLetter) {
         setDisableButton(true)
@@ -99,29 +97,24 @@ function App() {
 
 
     const [started, setStarted] = React.useState(false)
+
     // Generate random word
     const [targetWord, setTargetWord] = React.useState(randomWord());
+    console.log(targetWord);
+
     // Generate array of simplified version of targetWord
     let targetArray = (targetWord.split(''));
-    console.log(targetArray)
     let simpleArray = simplifyWordArray(targetArray);
-    // Generate masked array of targetArray
 
+    // Generate masked array of targetArray
     const [shownArray, setShownArray] = React.useState([]);
 
+    // Error count
     const [errors, setErrors] = React.useState(0);
-    const gameOn = (started === false) ? false : true;
-    const [wordColor, setWordColor] = React.useState('');
-    const [gameEnded, setGameEnded] = React.useState(false);
-    const [inputGuess, setInputGuess] = React.useState('');
 
-    // function resetStates() {
-    //     setStarted(initialStates.iStarted);
-    //     setTargetWord(initialStates.iTargetWord);
-    //     setShownArray(initialStates.iShownArray);
-    //     setErrors(initialStates.iErrors);
-    //     setWordColor(initialStates.iWordColor);
-    // }
+    const [wordColor, setWordColor] = React.useState('');
+    const [gameEnded, setGameEnded] = React.useState(true);
+    const [inputGuess, setInputGuess] = React.useState('');
 
     function randomWord() {
         const word = palavras[Math.floor(Math.random() * palavras.length)];
@@ -169,20 +162,20 @@ function App() {
 
     function startGame() {
         if (started === false) {
-            console.log(targetWord)
             setStarted(true);
             setShownArray(generateGuessArray(simpleArray))
             setGameEnded(false);
         } else {
             window.location.reload(true);
+            setGameEnded(true);
         }
     }
 
     function checkWord(word) {
+        word = word.toLowerCase();
         setShownArray(targetWord.split(''));
         setGameEnded(true);
-        if (word === targetWord) {
-            // alert('You Win!')            
+        if (word === targetWord) {         
             setWordColor('green');
         } else {
             setWordColor('red');
@@ -228,8 +221,8 @@ function App() {
                 <p>
                     Já sei a palavra!
                 </p>
-                <input className="guessInput" type="text" placeholder="Digite aqui seu chute" disabled={!gameOn} onChange={(e) => setInputGuess(e.target.value)} value={inputGuess} />
-                <button className='guessButton' disabled={!gameOn} onClick={() => checkWord(inputGuess)}>
+                <input className="guessInput" type="text" placeholder={(!gameEnded) ? "Digite aqui seu chute" : ''} disabled={gameEnded} onChange={(e) => setInputGuess(e.target.value)} value={inputGuess} />
+                <button className='guessButton' disabled={gameEnded} onClick={() => checkWord(inputGuess)}>
                     Chutar!
                 </button>
             </div>
