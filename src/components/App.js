@@ -35,8 +35,6 @@ function LetterButton(props) {
                 if (simpleArray[i] === clickedLetter) {
                     auxMask[i] = targetArray[i]
                     setMaskedArray(auxMask);
-                    console.log(targetArray);
-                    console.log(auxMask);
 
                     if (!auxMask.includes('_')) {
                         setMaskedArray(targetWord.split(''));
@@ -61,7 +59,7 @@ function LetterButton(props) {
     if (gameStarted === false || gameEnded === true) {
         return (
             <li>
-                <button className={`letterButton`} disabled >
+                <button className={`letterButton`} disabled data-identifier='letter'>
 
                     {letter.toUpperCase()}
 
@@ -71,7 +69,7 @@ function LetterButton(props) {
     } else {
         return (
             <li>
-                <button className={`letterButton`} disabled={disableButton} onClick={() => updateGuessArray(letter)}>
+                <button className={`letterButton`} disabled={disableButton} onClick={() => updateGuessArray(letter)} data-identifier='letter'>
 
                     {letter.toUpperCase()}
 
@@ -87,20 +85,11 @@ function App() {
 
     const hangEvolution = [f0, f1, f2, f3, f4, f5, f6];
 
-    // const initialStates = {
-    //     iStarted: false,
-    //     iTargetWord: randomWord(),
-    //     iShownArray: [],
-    //     iErrors: 0,
-    //     iWordColor: ''
-    // };
-
 
     const [started, setStarted] = React.useState(false)
 
     // Generate random word
     const [targetWord, setTargetWord] = React.useState(randomWord());
-    console.log(targetWord);
 
     // Generate array of simplified version of targetWord
     let targetArray = (targetWord.split(''));
@@ -175,7 +164,7 @@ function App() {
         word = word.toLowerCase();
         setShownArray(targetWord.split(''));
         setGameEnded(true);
-        if (word === targetWord) {         
+        if (word === targetWord) {
             setWordColor('green');
         } else {
             setWordColor('red');
@@ -187,13 +176,13 @@ function App() {
         <main>
             <div className="upper">
                 <div className="upperImage">
-                    <img src={hangEvolution[errors]} alt="" />
+                    <img src={hangEvolution[errors]} alt="" data-identifier='game-image'/>
                 </div>
                 <div className="upperRight">
-                    <button className="wordButton" onClick={startGame}>
+                    <button className="wordButton" onClick={startGame} data-identifier='choose-word'>
                         Escolher palavra
                     </button>
-                    <ul className={`targetWord ${wordColor}`}>
+                    <ul className={`targetWord ${wordColor}`} data-identifier='word'>
                         {shownArray.map((l, index) => <li key={index} >{l}</li>)}
                     </ul>
                 </div>
@@ -221,8 +210,9 @@ function App() {
                 <p>
                     Já sei a palavra!
                 </p>
-                <input className="guessInput" type="text" placeholder={(!gameEnded) ? "Digite aqui seu chute" : ''} disabled={gameEnded} onChange={(e) => setInputGuess(e.target.value)} value={inputGuess} />
-                <button className='guessButton' disabled={gameEnded} onClick={() => checkWord(inputGuess)}>
+                <input className="guessInput" type="text" placeholder={(!gameEnded) ? "Digite aqui seu chute" : ''} disabled={gameEnded}
+                    onChange={(e) => setInputGuess(e.target.value)} value={inputGuess} data-identifier='type-guess'/>
+                <button className='guessButton' disabled={gameEnded} onClick={() => checkWord(inputGuess)} data-identifier='guess-button'>
                     Chutar!
                 </button>
             </div>

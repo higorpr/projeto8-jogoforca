@@ -107,6 +107,11 @@
     width: 80px;
     font-size: 15px;
     font-weight: bold;
+    border-radius: 2px;
+}
+
+.letterButton {
+    border-radius: 5px;
 }
 
 button:disabled {
@@ -114,7 +119,11 @@ button:disabled {
     color: rgb(121, 129, 138);
 }
 
-
+.letterButton:enabled {
+    border: 1px solid rgb(14, 51, 77);;
+    background-color: rgb(225, 236, 244);
+    color: rgb(14, 51, 77);
+}
 
 .red {
     color: red;
